@@ -10,17 +10,32 @@
 
 ## 📖 The Pitch
 
-### The Problem
-Planning a weekend outing is surprisingly stressful. It involves "App Toggling Fatigue": checking the Weather app, then Google Maps, then Eventbrite, and finally Yelp to find food. By the time you find an event, you realize it's raining or the restaurant is fully booked.
+### Problem Statement
+Planning a weekend outing is surprisingly laborious because it suffers from "App Toggling Fatigue." A user must manually switch between a Weather app, Google Maps, Eventbrite, and Yelp to piece together a plan. By the time a suitable event is found, tickets may be sold out, or the user might realize the venue is outdoors and it is raining. This disjointed process forces users to act as project managers for their own free time, often leading to decision fatigue or cancelled plans.
 
-### The Solution
-**Weekender** is an intelligent concierge agent that unifies this process. You give it a vague intent (*"I want a fun Saturday night"*), and it autonomously:
-1.  **Researches** real-time weather and local events.
-2.  **Cross-references** your personal memory profile (likes/dislikes).
-3.  **Synthesizes** a conflict-free, personalized itinerary.
+### Solution Statement
+Weekender automates the entire planning lifecycle by acting as an intelligent concierge rather than a passive search engine. It autonomously researches real-time data (weather, events), cross-references it with a persistent user memory (dietary restrictions, music tastes), and synthesizes a conflict-free itinerary. This transforms the planning process from a 45-minute logistical chore into a single 30-second conversation, allowing users to focus on enjoying their time rather than managing it.
 
-### The Value
-Reduces a 45-minute fragmented planning task into a **30-second** interaction.
+### Architecture
+Core to Weekender is a Multi-Agent System that splits the cognitive load between specialized roles. It is not a monolithic script but a workflow of distinct agents contributing to different stages of the planning process.
+
+The real power of Weekender lies in its team of specialized sub-agents:
+
+The Researcher (Gemini 2.0 Flash): This agent serves as the "eyes" of the system. It is optimized for speed and tool usage. Its sole responsibility is to ingest the user's request, identify the necessary data points (e.g., "Is it raining?", "What jazz clubs are open?"), and execute external search tools to gather raw facts without bias.
+
+The Concierge (Gemini 2.5 Pro): Once the facts are gathered, the Concierge takes over. This agent acts as the "brain," optimized for reasoning and empathy. It synthesizes the raw data with the User Profile, filtering out options that don't match the user's tastes (e.g., filtering out outdoor events if rain is detected) and drafting a polite, formatted itinerary.
+
+### Essential Tools and Utilities
+The agents are equipped with specific tools to bridge the gap between the LLM and the real world:
+
+DuckDuckGo Search Wrapper (search_web): A robust tool that allows the Researcher agent to fetch real-time information about local events and weather forecasts. I implemented a fallback logic system: if the search API times out or returns error codes, the system gracefully degrades to cached backup data to ensure the user always receives a response.
+
+User Profile Memory (InMemorySession): To function as a true concierge, the system maintains a persistent dictionary of user preferences (e.g., "User dislikes spicy food"). This allows for context-aware recommendations that improve over time without the user needing to repeat their constraints.
+
+### Value Statement
+Weekender reduced the typical weekend planning time from approximately 45 minutes of manual research to a sub-minute interaction. It enables users to discover local events they would otherwise miss due to the friction of searching multiple platforms.
+
+If I had more time, I would add an Integration Agent capable of connecting to the Google Calendar API and OpenTable API. This would allow Weekender to not just suggest an itinerary, but actively book the table and block the time on the user's calendar, closing the loop completely.
 
 ---
 
